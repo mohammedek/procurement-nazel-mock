@@ -28,6 +28,10 @@ YEAR_2025_END = datetime(2025, 12, 31)
 # Generate realistic item (linked to catalog)
 def generate_packing_item(item_number: int, created_date: datetime):
     product = random.choice(material_catalog)
+    if created_date.month in [1, 2]:
+        product = material_catalog[0]  # e.g., Corn appears in Jan/Feb
+    elif created_date.month in [3, 4]:
+        product = material_catalog[1] 
     quantity = float(random.randint(500, 5000))  # bulk volumes
     unit_price = round(random.uniform(*product["unit_price_range"]), 2)
     net_value = round(quantity * unit_price, 2)
@@ -45,7 +49,7 @@ def generate_packing_item(item_number: int, created_date: datetime):
         "net_value": net_value,
         "gross_value": gross_value,
         "effective_value": net_value,
-        "month": created_date.month  # for SKU frequency later
+        "month": created_date.strftime("%B")  # for SKU frequency later
     }
 
 # Generate a single PO
@@ -60,7 +64,7 @@ def generate_po(po_id: int):
     created_date = fake.date_between_dates(date_start=YEAR_2025_START, date_end=YEAR_2025_END)
     month = created_date.month
 
-    items = [generate_packing_item((i+1)*10, month) for i in range(num_items)]
+    items = [generate_packing_item((i+1)*10, created_date) for i in range(num_items)]
     total_value = round(sum(item["net_value"] for item in items), 2)
 
     last_modified = created_date + timedelta(days=random.randint(0,7))
