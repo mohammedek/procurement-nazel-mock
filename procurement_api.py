@@ -20,7 +20,14 @@ material_catalog = [
     {"description": "Rumen Protected Fat", "material_group": "ADD", "unit": "KG", "unit_price_range": (3.0, 4.5)},
     {"description": "Molasses", "material_group": "ADD", "unit": "L", "unit_price_range": (0.6, 1.0)}
 ]
-
+purchasing_group_map = {
+    "GRAIN": "PG-GRAIN",
+    "MEAL": "PG-MEAL",
+    "FORAGE": "PG-FORAGE",
+    "BYPROD": "PG-BYPROD",
+    "OILSEED": "PG-OIL",
+    "ADD": "PG-ADDITIVES"
+}
 
 YEAR_2025_START = datetime(2025, 1, 1)
 YEAR_2025_END = datetime(2025, 12, 31)
@@ -44,6 +51,7 @@ def generate_packing_item(item_number: int, created_date: datetime):
         "plant": f"PLANT{random.randint(1,3):03d}",
         "material_group": product["material_group"],
         "quantity": quantity,
+        "purchasing_group": purchasing_group_map[product["material_group"]],  # not random
         "unit": product["unit"],
         "unit_price": unit_price,
         "net_value": net_value,
@@ -80,7 +88,7 @@ def generate_po(po_id: int):
         "last_modified": last_modified.strftime("%Y-%m-%d"),
         "supplier_id": supplier_id,
         "purchasing_org": "ORG1000",
-        "purchasing_group": "GRP100",
+        "purchasing_group": items[0]["purchasing_group"],  # take from first item
         "total_value": float(total_value),
         "currency": "SAR",
         "items": items
